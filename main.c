@@ -2,6 +2,126 @@
 #include <stdlib.h>
 #include <math.h>
 
+char* unsignedIntToBinary(unsigned number){
+    char* result = (char*) malloc(17 * sizeof(char));
+    snprintf(result, 17, "0000000000000000");
+
+    int limitIndex = 15;
+
+    int temp = number;
+    int digit;
+
+    while(temp > 0){
+
+        digit = temp % 2;
+        temp = temp / 2;
+
+        // assign the changed bit
+        if(digit == 1){
+            result[limitIndex] = '1';
+        }
+        //result[limitIndex] = digit + '0';
+        limitIndex--;
+        //printf("%d\n",temp);
+    }
+
+    return result;
+}
+
+int mathPow(int base, int power){
+
+    int result = 1;
+
+    int i;
+    for(i = 0; i < power;i++){
+        result *= base;
+    }
+
+    return result;
+}
+
+char hexValue(int value){
+
+    if(value == 15){
+        return 'F';
+    }else if(value == 14){
+        return 'E';
+    }else if(value == 13){
+        return 'D';
+    }else if(value == 12){
+        return 'C';
+    }else if(value == 11){
+        return 'B';
+    }else if(value == 10){
+        return 'A';
+    }else if(value <= 9 && value >= 0){
+        return value + '0';
+    }else{
+        return 0;
+    }
+
+}
+
+char* binaryToHexadecimal(char* array){
+
+    char* result = (char*) malloc(5 * sizeof(char));
+    snprintf(result,5,"0000");
+
+    int value = 0;
+    int limitIndex = 0;
+    while(limitIndex <= 3){
+
+        int innerLimitIndex = 0;
+        while(innerLimitIndex <=3){
+            value += ((array[4*limitIndex + innerLimitIndex] - 48)* mathPow(2,3-innerLimitIndex));
+            innerLimitIndex++;
+        }
+        //printf("%d\n",value);
+        result[limitIndex] = hexValue(value);
+        value = 0;
+
+        limitIndex++;
+    }
+
+    return result;
+}
+
+char* signedIntToBinary(signed int number){
+    if(number >= 0){
+        return unsignedIntToBinary((unsigned int) number);
+    }else{
+
+        char* result = (char*) malloc(17 * sizeof(char));
+        int temp = number * -1;
+
+        snprintf(result,17,signedIntToBinary(temp));
+
+        int counter = 0;
+        int i;
+
+        for(i = 15; i >= 0; i--){
+
+            if(result[i] == '1' && counter == 0){
+                counter = 1;
+                continue;
+            }
+
+            if(counter == 1){
+                if(result[i] == '0'){
+                    result[i] = '1';
+                }else{
+                    result[i] = '0';
+                }
+            }
+
+        }
+
+        return result;
+    }
+
+}
+
+
 
 int main(int argc, char *argv[]) {
     //Argument kısmına file'ın path'ini ilk argument olarak girin
@@ -78,7 +198,17 @@ int main(int argc, char *argv[]) {
                     last_char = last_char - 1;
                 }
 
-                printf("number is unsigned and value is %u\n", unsigned_num);
+                char *hex_value = binaryToHexadecimal(unsignedIntToBinary(unsigned_num));
+
+                for (int i = 0; i < 4; i++) {
+                    if (i == 1) {
+                        printf("%c ", hex_value[i]);
+                    }
+                    else {
+                        printf("%c", hex_value[i]);
+                    }
+                }
+                printf("\n");
                 check = 1;
                 break;
             }
@@ -91,7 +221,17 @@ int main(int argc, char *argv[]) {
                 power = power * 10;
             }
 
-            printf("number is decimal and the value is %d\n", decimal_number);
+            char *hex_value = binaryToHexadecimal(signedIntToBinary(decimal_number));
+
+            for (int i = 0; i < 4; i++) {
+                if (i == 1) {
+                    printf("%c ", hex_value[i]);
+                }
+                else {
+                    printf("%c", hex_value[i]);
+                }
+            }
+            printf("\n");
         }
     }
 }
