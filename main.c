@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
                 for (int i = 0; i < 50; i++) {
                     if (number_str[i] == '.') {
                         int num1 = 0;
+
                         int sign = 0;
                         int power = 1;
                         for (int j = i - 1; j >= 0; j--) {
@@ -157,29 +158,56 @@ int main(int argc, char *argv[]) {
                             }
                         }
 
+                        double num2 = 0;
+                        double power2 = 0.1;
+
+                        for(int m= i + 1;m<50;m++){
+                            if (number_str[m] == '\0') {
+                                break;
+                            }
+                            else {
+                                num2 += (number_str[m] - 48) * power2;
+                                power2 /= 10;
+                            }
+                        }
+
+
                         int temp_arr3[50];
                         int k = 0;
 
-                        while (num1 != 0) {
-                            temp_arr3[k] = num1 % 2;
-                            num1 /= 2;
-                            k++;
+                        if (num1 == 0) {
+                            temp_arr3[0] = 0;
+                            //k=1; bir sıkıntı çıkarsa icabına bakarız
+                        }
+                        else {
+                            while (num1 != 0) {
+                                temp_arr3[k] = num1 % 2;
+                                num1 /= 2;
+                                k++;
+                            }
                         }
 
+
                         for (int l = k - 1; l >= 0; l--) {
-                            temp_arr2[(k - 1) - l] = temp_arr3[l];
+                            temp_arr2[k - 1 - l] = temp_arr3[l];
+                        }
+
+                        for(int n=k;n<50;n++){
+                            num2*=2;
+                            if(num2>=1){
+                                temp_arr2[n]=1;
+                                num2=num2-1;
+                            }
+                            else{
+                                temp_arr2[n]=0;
+                            }
+
+                        }
+
+                        for (int p = 0; p < 50; p++) {
+                            printf("%d", temp_arr2[p]);
                         }
                         break;
-                    }
-                }
-                printf("number is float and the left part is binary ");
-                int m = 0;
-                while (1) {
-                    if (temp_arr2[m] == -1) {
-                        break;
-                    } else {
-                        printf("%d", temp_arr2[m]);
-                        m++;
                     }
                 }
                 printf("\n");
