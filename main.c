@@ -3,8 +3,9 @@
 #include <math.h>
 
 
-int main() {
-    FILE *ptr = fopen("C:\\Users\\LENOVO\\Desktop\\odev.txt", "r");
+int main(int argc, char *argv[]) {
+    //Argument kısmına file'ın path'ini ilk argument olarak girin
+    FILE *ptr = fopen(argv[1], "r");
     while (feof(ptr) == 0) {
         char number_str[50];
         fscanf(ptr, "%s", number_str);
@@ -16,7 +17,6 @@ int main() {
                 break;
             }
             else if (number_str[i] == '.') {
-                printf("number is float\n");
                 int temp_arr2[50];
                 for (int h = 0; h < 50; h++) {
                     temp_arr2[h] = -1;
@@ -49,8 +49,20 @@ int main() {
                         for (int l = k - 1; l >= 0; l--) {
                             temp_arr2[(k - 1) - l] = temp_arr3[l];
                         }
+                        break;
                     }
                 }
+                printf("number is float and the left part is binary ");
+                int m = 0;
+                while (1) {
+                    if (temp_arr2[m] == -1) {
+                        break;
+                    } else {
+                        printf("%d", temp_arr2[m]);
+                        m++;
+                    }
+                }
+                printf("\n");
                 check = 1;
                 break;
             }
