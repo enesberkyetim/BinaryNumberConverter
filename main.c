@@ -138,27 +138,28 @@ int main(int argc, char *argv[]) {
             }
             else if (number_str[i] == '.') {
                 int temp_arr2[50];
+                int sign = 0;
                 for (int h = 0; h < 50; h++) {
                     temp_arr2[h] = -1;
                 }
 
                 for (int i = 0; i < 50; i++) {
                     if (number_str[i] == '.') {
-                        int num1 = 0;
+                        int num_before_point = 0;
 
-                        int sign = 0;
+
                         int power = 1;
                         for (int j = i - 1; j >= 0; j--) {
                             if (j == 0 && number_str[j] == '-') {
                                 sign = 1;
                             }
                             else {
-                                num1 += (number_str[j] - 48) * power;
+                                num_before_point += (number_str[j] - 48) * power;
                                 power *= 10;
                             }
                         }
 
-                        double num2 = 0;
+                        double num_after_point = 0;
                         double power2 = 0.1;
 
                         for(int m= i + 1;m<50;m++){
@@ -166,7 +167,7 @@ int main(int argc, char *argv[]) {
                                 break;
                             }
                             else {
-                                num2 += (number_str[m] - 48) * power2;
+                                num_after_point += (number_str[m] - 48) * power2;
                                 power2 /= 10;
                             }
                         }
@@ -175,14 +176,14 @@ int main(int argc, char *argv[]) {
                         int temp_arr3[50];
                         int k = 0;
 
-                        if (num1 == 0) {
+                        if (num_before_point == 0) {
                             temp_arr3[0] = 0;
                             //k=1; bir sıkıntı çıkarsa icabına bakarız
                         }
                         else {
-                            while (num1 != 0) {
-                                temp_arr3[k] = num1 % 2;
-                                num1 /= 2;
+                            while (num_before_point != 0) {
+                                temp_arr3[k] = num_before_point % 2;
+                                num_before_point /= 2;
                                 k++;
                             }
                         }
@@ -193,21 +194,136 @@ int main(int argc, char *argv[]) {
                         }
 
                         for(int n=k;n<50;n++){
-                            num2*=2;
-                            if(num2>=1){
+                            num_after_point*=2;
+                            if(num_after_point>=1){
                                 temp_arr2[n]=1;
-                                num2=num2-1;
+                                num_after_point=num_after_point-1;
                             }
                             else{
                                 temp_arr2[n]=0;
                             }
+                        }
+
+                        int exponent = k - 1;
+                        int fraction_size = 0;
+                        int exponent_size = 0;
+
+                        switch (50) {
+                            case 49 :
+                                fraction_size = 4;
+                                exponent_size = 3;
+                                break;
+                            case 50:
+                                fraction_size = 7;
+                                exponent_size = 8;
+                                break;
+                            case 51:
+                                fraction_size = 13;
+                                exponent_size = 10;
+                                break;
+                            case 52:
+                                fraction_size = 19;
+                                exponent_size = 12;
+                                break;
+                        }
+
+                        int final_float[fraction_size + exponent_size + 1];
+
+                        int fraction_arr1[fraction_size + 3];
+                        fraction_arr1[0] = 0;
+
+                        for (int q = 1; q <= fraction_size + 2; q++) {
+                            fraction_arr1[q] = temp_arr2[q];
+                        }
+                        int fraction_bits[fraction_size];
+
+                        if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==0)) {
+                            for(int q = 1; q <= fraction_size; q++) {
+                                fraction_bits[q - 1] = fraction_arr1[q];
+                            }
+
+                        }
+                        else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==1)){
+                            for (int q = fraction_size; q >= 0; q--) {
+                                if (fraction_arr1[q] == 1) {
+                                    fraction_arr1[q] = 0;
+                                }
+                                else if (fraction_arr1[q] == 0) {
+                                    fraction_arr1[q] = 1;
+                                    break;
+                                }
+                            }
+
+                            if (fraction_arr1[0] == 1) {
+                                for(int q = 0; q <= fraction_size - 1; q++) {
+                                    fraction_bits[q] = fraction_arr1[q];
+                                }
+                            }
+                            else if (fraction_arr1[0] == 0) {
+                                for(int q = 1; q <= fraction_size; q++) {
+                                    fraction_bits[q - 1] = fraction_arr1[q];
+                                }
+                            }
+
+                        }
+                        else if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==1)){
+                            for(int q = 1; q <= fraction_size; q++) {
+                                fraction_bits[q - 1] = fraction_arr1[q];
+                            }
+                        }
+                        else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==0)){
+                            if (fraction_arr1[fraction_size] == 0) {
+                                for(int q = 1; q <= fraction_size; q++) {
+                                    fraction_bits[q - 1] = fraction_arr1[q];
+                                }
+                            }
+                            else if (fraction_arr1[fraction_size] == 1) {
+                                for (int q = fraction_size; q >= 0; q--) {
+                                    if (fraction_arr1[q] == 1) {
+                                        fraction_arr1[q] = 0;
+                                    }
+                                    else if (fraction_arr1[q] == 0) {
+                                        fraction_arr1[q] = 1;
+                                        break;
+                                    }
+                                }
+
+                                if (fraction_arr1[0] == 1) {
+                                    for(int q = 0; q <= fraction_size - 1; q++) {
+                                        fraction_bits[q] = fraction_arr1[q];
+                                    }
+                                    exponent++;
+                                }
+                                else if (fraction_arr1[0] == 0) {
+                                    for(int q = 1; q <= fraction_size; q++) {
+                                        fraction_bits[q - 1] = fraction_arr1[q];
+                                    }
+                                }
+                            }
 
                         }
 
-                        for (int p = 0; p < 50; p++) {
-                            printf("%d", temp_arr2[p]);
+                        final_float[0] = sign;
+
+                        int exp_value = exponent + mathPow(2,exponent_size -  1) - 1;
+
+                        for (int i = exponent_size; i >= 1; i--) {
+                            final_float[i] = exp_value % 2;
+                            exp_value /= 2;
                         }
+
+                        for (int i = exponent_size + 1; i <= exponent_size + fraction_size + 1; i++) {
+                            final_float[i] = fraction_bits[i - exponent_size - 1];
+                        }
+
+                        for (int i = 0; i < exponent_size + fraction_size + 1; i++) {
+                            printf("%d", final_float[i]);
+                        }
+
+
                         break;
+
+
                     }
                 }
                 printf("\n");
