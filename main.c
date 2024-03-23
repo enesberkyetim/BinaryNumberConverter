@@ -383,13 +383,27 @@ int main(int argc, char *argv[]) {
 
                             char* print_array = binaryToHexadecimal(final_array);
 
-                            for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
-                                if (i == 1) {
-                                    printf("%c ", print_array[i]);
-                                }
-                                else {
-                                    printf("%c", print_array[i]);
-                                }
+                            char arg2 = *argv[2];
+
+                            switch ((int)(arg2)) {
+                                case 108:
+                                    for(i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
+                                        if(i%2==0){
+                                            printf("%c",print_array[i]);
+                                            printf("%c ",print_array[i + 1]);
+                                        }
+                                    }
+                                    break;
+                                case 98:
+                                    for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
+                                        if (i % 2 == 1) {
+                                            printf("%c ", print_array[i]);
+                                        }
+                                        else {
+                                            printf("%c", print_array[i]);
+                                        }
+                                    }
+                                    break;
                             }
                         }
                         else { // normalized
@@ -500,14 +514,32 @@ int main(int argc, char *argv[]) {
 
                             char* print_array = binaryToHexadecimal(final_array);
 
-                            for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
-                                if (i == 1) {
-                                    printf("%c ", print_array[i]);
-                                }
-                                else {
-                                    printf("%c", print_array[i]);
-                                }
+                            // big endian
+
+                            char arg2 = *argv[2];
+
+                            switch ((int)(arg2)) {
+                                case 108:
+                                    for(i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
+                                        if(i%2==0){
+                                            printf("%c",print_array[i]);
+                                            printf("%c ",print_array[i + 1]);
+                                        }
+                                    }
+                                    break;
+                                case 98:
+                                    for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
+                                        if (i % 2 == 1) {
+                                            printf("%c ", print_array[i]);
+                                        }
+                                        else {
+                                            printf("%c", print_array[i]);
+                                        }
+                                    }
+                                    break;
                             }
+
+
                         }
 
 
