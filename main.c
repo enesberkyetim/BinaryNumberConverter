@@ -62,14 +62,16 @@ char hexValue(int value){
 
 }
 
-char* binaryToHexadecimal(char* array){
+char* binaryToHexadecimalPattern(char* array,int arraySize,char* defaultArray){
 
-    char* result = (char*) malloc(5 * sizeof(char));
-    snprintf(result,5,"0000");
+    char* result = (char*) malloc(arraySize * sizeof(char));
+    snprintf(result,3,defaultArray);
 
     int value = 0;
     int limitIndex = 0;
-    while(limitIndex <= 3){
+    int lengthOfResult = arraySize-2;
+
+    while(limitIndex <= lengthOfResult){
 
         int innerLimitIndex = 0;
         while(innerLimitIndex <=3){
@@ -83,8 +85,45 @@ char* binaryToHexadecimal(char* array){
         limitIndex++;
     }
 
+    result[limitIndex] = '\0';
+
     return result;
 }
+
+int findCharArraySize(char* array){
+
+    int counter = 0;
+
+    while(array[counter] != '\0'){
+        counter++;
+    }
+
+    return counter;
+}
+
+char* binaryToHexadecimal(char* array){
+
+    if(findCharArraySize(array) == 8){
+
+        return binaryToHexadecimalPattern(array,3,"00");
+
+    }else if(findCharArraySize(array) == 16){
+
+        return binaryToHexadecimalPattern(array,5,"0000");
+
+    }else if(findCharArraySize(array) == 24){
+
+        return binaryToHexadecimalPattern(array,7,"000000");
+
+    }else if(findCharArraySize(array) == 32){
+
+        return binaryToHexadecimalPattern(array,9,"00000000");
+
+    }
+
+}
+
+
 
 char* signedIntToBinary(signed int number){
     if(number >= 0){
@@ -204,11 +243,15 @@ int main(int argc, char *argv[]) {
                             }
                         }
 
+
+
                         int exponent = k - 1;
                         int fraction_size = 0;
                         int exponent_size = 0;
 
-                        switch (50) {
+                        char arg = *argv[3];
+
+                        switch ((int)(arg)) {
                             case 49 :
                                 fraction_size = 4;
                                 exponent_size = 3;
@@ -229,55 +272,27 @@ int main(int argc, char *argv[]) {
 
                         int final_float[fraction_size + exponent_size + 1];
 
-                        int fraction_arr1[fraction_size + 3];
-                        fraction_arr1[0] = 0;
+                        double abs_number = num_before_point + num_after_point;
 
-                        for (int q = 1; q <= fraction_size + 2; q++) {
-                            fraction_arr1[q] = temp_arr2[q];
-                        }
-                        int fraction_bits[fraction_size];
+                        if (abs_number < (1-(pow(2,exponent_size-1)-1)) && abs_number > -(1-(pow(2,exponent_size-1)-1))) {// denormalized
 
-                        if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==0)) {
-                            for(int q = 1; q <= fraction_size; q++) {
-                                fraction_bits[q - 1] = fraction_arr1[q];
+                            final_float[0] = sign;
+
+                            int fraction_arr1[fraction_size + 3];
+                            fraction_arr1[0] = 0;
+
+                            for (int q = 0; q <= fraction_size + 1; q++) {
+                                fraction_arr1[q + 1] = temp_arr2[q];
                             }
+                            int fraction_bits[fraction_size];
 
-                        }
-                        else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==1)){
-                            for (int q = fraction_size; q >= 0; q--) {
-                                if (fraction_arr1[q] == 1) {
-                                    fraction_arr1[q] = 0;
-                                }
-                                else if (fraction_arr1[q] == 0) {
-                                    fraction_arr1[q] = 1;
-                                    break;
-                                }
-                            }
-
-                            if (fraction_arr1[0] == 1) {
-                                for(int q = 0; q <= fraction_size - 1; q++) {
-                                    fraction_bits[q] = fraction_arr1[q];
-                                }
-                            }
-                            else if (fraction_arr1[0] == 0) {
+                            if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==0)) {
                                 for(int q = 1; q <= fraction_size; q++) {
                                     fraction_bits[q - 1] = fraction_arr1[q];
                                 }
-                            }
 
-                        }
-                        else if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==1)){
-                            for(int q = 1; q <= fraction_size; q++) {
-                                fraction_bits[q - 1] = fraction_arr1[q];
                             }
-                        }
-                        else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==0)){
-                            if (fraction_arr1[fraction_size] == 0) {
-                                for(int q = 1; q <= fraction_size; q++) {
-                                    fraction_bits[q - 1] = fraction_arr1[q];
-                                }
-                            }
-                            else if (fraction_arr1[fraction_size] == 1) {
+                            else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==1)){
                                 for (int q = fraction_size; q >= 0; q--) {
                                     if (fraction_arr1[q] == 1) {
                                         fraction_arr1[q] = 0;
@@ -292,33 +307,210 @@ int main(int argc, char *argv[]) {
                                     for(int q = 0; q <= fraction_size - 1; q++) {
                                         fraction_bits[q] = fraction_arr1[q];
                                     }
-                                    exponent++;
                                 }
                                 else if (fraction_arr1[0] == 0) {
                                     for(int q = 1; q <= fraction_size; q++) {
                                         fraction_bits[q - 1] = fraction_arr1[q];
                                     }
                                 }
+
+                            }
+                            else if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==1)){
+                                for(int q = 1; q <= fraction_size; q++) {
+                                    fraction_bits[q - 1] = fraction_arr1[q];
+                                }
+                            }
+                            else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==0)){
+                                if (fraction_arr1[fraction_size] == 0) {
+                                    for(int q = 1; q <= fraction_size; q++) {
+                                        fraction_bits[q - 1] = fraction_arr1[q];
+                                    }
+                                }
+                                else if (fraction_arr1[fraction_size] == 1) {
+                                    for (int q = fraction_size; q >= 0; q--) {
+                                        if (fraction_arr1[q] == 1) {
+                                            fraction_arr1[q] = 0;
+                                        }
+                                        else if (fraction_arr1[q] == 0) {
+                                            fraction_arr1[q] = 1;
+                                            break;
+                                        }
+                                    }
+
+                                    if (fraction_arr1[0] == 1) {
+                                        for(int q = 0; q <= fraction_size - 1; q++) {
+                                            fraction_bits[q] = fraction_arr1[q];
+                                        }
+                                        exponent++;
+                                    }
+                                    else if (fraction_arr1[0] == 0) {
+                                        for(int q = 1; q <= fraction_size; q++) {
+                                            fraction_bits[q - 1] = fraction_arr1[q];
+                                        }
+                                    }
+                                }
+
                             }
 
+                            final_float[0] = sign;
+
+                            int exp_value = 0;
+
+                            for (int i = exponent_size; i >= 1; i--) {
+                                final_float[i] = exp_value % 2;
+                                exp_value /= 2;
+                            }
+
+                            for (int i = exponent_size + 1; i <= exponent_size + fraction_size + 1; i++) {
+                                final_float[i] = fraction_bits[i - exponent_size - 1];
+                            }
+
+                            char final_char_arr[exponent_size + fraction_size + 2];
+
+                            for (int i = 0; i <= exponent_size + fraction_size + 1; i++) {
+                                if (i == exponent_size + fraction_size + 1) {
+                                    final_char_arr[i] = '\0';
+                                }
+                                else {
+                                    final_char_arr[i] = (char)(final_float[i] + 48);
+                                }
+                            }
+
+                            char* final_array = (char*) malloc((exponent_size + fraction_size + 2) * sizeof(char));
+                            snprintf(final_array,(exponent_size + fraction_size + 2), final_char_arr);
+
+
+
+                            char* print_array = binaryToHexadecimal(final_array);
+
+                            for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
+                                if (i == 1) {
+                                    printf("%c ", print_array[i]);
+                                }
+                                else {
+                                    printf("%c", print_array[i]);
+                                }
+                            }
+                        }
+                        else { // normalized
+
+
+                            int fraction_arr1[fraction_size + 3];
+                            fraction_arr1[0] = 0;
+
+                            for (int q = 1; q <= fraction_size + 2; q++) {
+                                fraction_arr1[q] = temp_arr2[q];
+                            }
+                            int fraction_bits[fraction_size];
+
+                            if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==0)) {
+                                for(int q = 1; q <= fraction_size; q++) {
+                                    fraction_bits[q - 1] = fraction_arr1[q];
+                                }
+
+                            }
+                            else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==1)){
+                                for (int q = fraction_size; q >= 0; q--) {
+                                    if (fraction_arr1[q] == 1) {
+                                        fraction_arr1[q] = 0;
+                                    }
+                                    else if (fraction_arr1[q] == 0) {
+                                        fraction_arr1[q] = 1;
+                                        break;
+                                    }
+                                }
+
+                                if (fraction_arr1[0] == 1) {
+                                    for(int q = 0; q <= fraction_size - 1; q++) {
+                                        fraction_bits[q] = fraction_arr1[q];
+                                    }
+                                }
+                                else if (fraction_arr1[0] == 0) {
+                                    for(int q = 1; q <= fraction_size; q++) {
+                                        fraction_bits[q - 1] = fraction_arr1[q];
+                                    }
+                                }
+
+                            }
+                            else if((fraction_arr1[fraction_size+1]==0)&&(fraction_arr1[fraction_size+2]==1)){
+                                for(int q = 1; q <= fraction_size; q++) {
+                                    fraction_bits[q - 1] = fraction_arr1[q];
+                                }
+                            }
+                            else if((fraction_arr1[fraction_size+1]==1)&&(fraction_arr1[fraction_size+2]==0)){
+                                if (fraction_arr1[fraction_size] == 0) {
+                                    for(int q = 1; q <= fraction_size; q++) {
+                                        fraction_bits[q - 1] = fraction_arr1[q];
+                                    }
+                                }
+                                else if (fraction_arr1[fraction_size] == 1) {
+                                    for (int q = fraction_size; q >= 0; q--) {
+                                        if (fraction_arr1[q] == 1) {
+                                            fraction_arr1[q] = 0;
+                                        }
+                                        else if (fraction_arr1[q] == 0) {
+                                            fraction_arr1[q] = 1;
+                                            break;
+                                        }
+                                    }
+
+                                    if (fraction_arr1[0] == 1) {
+                                        for(int q = 0; q <= fraction_size - 1; q++) {
+                                            fraction_bits[q] = fraction_arr1[q];
+                                        }
+                                        exponent++;
+                                    }
+                                    else if (fraction_arr1[0] == 0) {
+                                        for(int q = 1; q <= fraction_size; q++) {
+                                            fraction_bits[q - 1] = fraction_arr1[q];
+                                        }
+                                    }
+                                }
+
+                            }
+
+                            final_float[0] = sign;
+
+                            int exp_value = exponent + mathPow(2,exponent_size -  1) - 1;
+
+                            for (int i = exponent_size; i >= 1; i--) {
+                                final_float[i] = exp_value % 2;
+                                exp_value /= 2;
+                            }
+
+                            for (int i = exponent_size + 1; i <= exponent_size + fraction_size + 1; i++) {
+                                final_float[i] = fraction_bits[i - exponent_size - 1];
+                            }
+
+                            char final_char_arr[exponent_size + fraction_size + 2];
+
+                            for (int i = 0; i <= exponent_size + fraction_size + 1; i++) {
+                                if (i == exponent_size + fraction_size + 1) {
+                                    final_char_arr[i] = '\0';
+                                }
+                                else {
+                                    final_char_arr[i] = (char)(final_float[i] + 48);
+                                }
+                            }
+
+                            char* final_array = (char*) malloc((exponent_size + fraction_size + 2) * sizeof(char));
+                            snprintf(final_array,(exponent_size + fraction_size + 2), final_char_arr);
+
+
+
+                            char* print_array = binaryToHexadecimal(final_array);
+
+                            for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
+                                if (i == 1) {
+                                    printf("%c ", print_array[i]);
+                                }
+                                else {
+                                    printf("%c", print_array[i]);
+                                }
+                            }
                         }
 
-                        final_float[0] = sign;
 
-                        int exp_value = exponent + mathPow(2,exponent_size -  1) - 1;
-
-                        for (int i = exponent_size; i >= 1; i--) {
-                            final_float[i] = exp_value % 2;
-                            exp_value /= 2;
-                        }
-
-                        for (int i = exponent_size + 1; i <= exponent_size + fraction_size + 1; i++) {
-                            final_float[i] = fraction_bits[i - exponent_size - 1];
-                        }
-
-                        for (int i = 0; i < exponent_size + fraction_size + 1; i++) {
-                            printf("%d", final_float[i]);
-                        }
 
 
                         break;
