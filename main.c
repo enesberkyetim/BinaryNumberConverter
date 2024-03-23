@@ -387,7 +387,7 @@ int main(int argc, char *argv[]) {
 
                             switch ((int)(arg2)) {
                                 case 108:
-                                    for(i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
+                                    for(int i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
                                         if(i%2==0){
                                             printf("%c",print_array[i]);
                                             printf("%c ",print_array[i + 1]);
@@ -520,7 +520,7 @@ int main(int argc, char *argv[]) {
 
                             switch ((int)(arg2)) {
                                 case 108:
-                                    for(i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
+                                    for(int i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
                                         if(i%2==0){
                                             printf("%c",print_array[i]);
                                             printf("%c ",print_array[i + 1]);
@@ -568,13 +568,27 @@ int main(int argc, char *argv[]) {
 
                 char *hex_value = binaryToHexadecimal(unsignedIntToBinary(unsigned_num));
 
-                for (int i = 0; i < 4; i++) {
-                    if (i == 1) {
-                        printf("%c ", hex_value[i]);
-                    }
-                    else {
-                        printf("%c", hex_value[i]);
-                    }
+                char arg2 = *argv[2];
+
+                switch ((int)(arg2)) {
+                    case 108:
+                        for(int i=3;i>=0;i--){
+                            if(i%2==0){
+                                printf("%c",hex_value[i]);
+                                printf("%c ",hex_value[i + 1]);
+                            }
+                        }
+                        break;
+                    case 98:
+                        for (int i = 0; i < 4; i++) {
+                            if (i % 2 == 1) {
+                                printf("%c ", hex_value[i]);
+                            }
+                            else {
+                                printf("%c", hex_value[i]);
+                            }
+                        }
+                        break;
                 }
                 printf("\n");
                 check = 1;
@@ -591,13 +605,27 @@ int main(int argc, char *argv[]) {
 
             char *hex_value = binaryToHexadecimal(signedIntToBinary(decimal_number));
 
-            for (int i = 0; i < 4; i++) {
-                if (i == 1) {
-                    printf("%c ", hex_value[i]);
-                }
-                else {
-                    printf("%c", hex_value[i]);
-                }
+            char arg2 = *argv[2];
+
+            switch ((int)(arg2)) {
+                case 108:
+                    for(int i=3;i>=0;i--){
+                        if(i%2==0){
+                            printf("%c",hex_value[i]);
+                            printf("%c ",hex_value[i + 1]);
+                        }
+                    }
+                    break;
+                case 98:
+                    for (int i = 0; i < 4; i++) {
+                        if (i % 2 == 1) {
+                            printf("%c ", hex_value[i]);
+                        }
+                        else {
+                            printf("%c", hex_value[i]);
+                        }
+                    }
+                    break;
             }
             printf("\n");
         }
