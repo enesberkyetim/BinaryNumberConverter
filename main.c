@@ -165,6 +165,7 @@ char* signedIntToBinary(signed int number){
 int main(int argc, char *argv[]) {
     //Argument kısmına file'ın path'ini ilk argument olarak girin
     FILE *ptr = fopen(argv[1], "r");
+    FILE *output = fopen("output.txt", "w");
     while (feof(ptr) == 0) {
         char number_str[50];
         fscanf(ptr, "%s", number_str);
@@ -481,6 +482,8 @@ int main(int argc, char *argv[]) {
                                 case 108:
                                     for(int i=(special_size + 1)/4-1;i>=0;i--){
                                         if(i%2==0){
+                                            fprintf(output, "%c", print_array[i]);
+                                            fprintf(output, "%c ", print_array[i + 1]);
                                             printf("%c",print_array[i]);
                                             printf("%c ",print_array[i + 1]);
                                         }
@@ -489,9 +492,11 @@ int main(int argc, char *argv[]) {
                                 case 98:
                                     for (int i = 0; i < (special_size + 1) / 4; i++) {
                                         if (i % 2 == 1) {
+                                            fprintf(output, "%c ", print_array[i]);
                                             printf("%c ", print_array[i]);
                                         }
                                         else {
+                                            fprintf(output, "%c", print_array[i]);
                                             printf("%c", print_array[i]);
                                         }
                                     }
@@ -614,6 +619,8 @@ int main(int argc, char *argv[]) {
                                 case 108:
                                     for(int i=(special_size + 1)/4-1;i>=0;i--){
                                         if(i%2==0){
+                                            fprintf(output, "%c", print_array[i]);
+                                            fprintf(output, "%c ", print_array[i + 1]);
                                             printf("%c",print_array[i]);
                                             printf("%c ",print_array[i + 1]);
                                         }
@@ -622,9 +629,11 @@ int main(int argc, char *argv[]) {
                                 case 98:
                                     for (int i = 0; i < (special_size + 1) / 4; i++) {
                                         if (i % 2 == 1) {
+                                            fprintf(output, "%c ", print_array[i]);
                                             printf("%c ", print_array[i]);
                                         }
                                         else {
+                                            fprintf(output, "%c", print_array[i]);
                                             printf("%c", print_array[i]);
                                         }
                                     }
@@ -639,6 +648,7 @@ int main(int argc, char *argv[]) {
 
                     }
                 }
+                fprintf(output, "\n");
                 printf("\n");
                 check = 1;
                 break;
@@ -663,6 +673,8 @@ int main(int argc, char *argv[]) {
                     case 108:
                         for(int i=3;i>=0;i--){
                             if(i%2==0){
+                                fprintf(output, "%c", hex_value[i]);
+                                fprintf(output, "%c ", hex_value[i + 1]);
                                 printf("%c",hex_value[i]);
                                 printf("%c ",hex_value[i + 1]);
                             }
@@ -671,14 +683,17 @@ int main(int argc, char *argv[]) {
                     case 98:
                         for (int i = 0; i < 4; i++) {
                             if (i % 2 == 1) {
+                                fprintf(output, "%c ", hex_value[i]);
                                 printf("%c ", hex_value[i]);
                             }
                             else {
+                                fprintf(output, "%c", hex_value[i]);
                                 printf("%c", hex_value[i]);
                             }
                         }
                         break;
                 }
+                fprintf(output, "\n");
                 printf("\n");
                 check = 1;
                 break;
@@ -704,6 +719,8 @@ int main(int argc, char *argv[]) {
                 case 108:
                     for(int i=3;i>=0;i--){
                         if(i%2==0){
+                            fprintf(output, "%c", hex_value[i]);
+                            fprintf(output, "%c ", hex_value[i + 1]);
                             printf("%c",hex_value[i]);
                             printf("%c ",hex_value[i + 1]);
                         }
@@ -712,14 +729,17 @@ int main(int argc, char *argv[]) {
                 case 98:
                     for (int i = 0; i < 4; i++) {
                         if (i % 2 == 1) {
+                            fprintf(output, "%c ", hex_value[i]);
                             printf("%c ", hex_value[i]);
                         }
                         else {
+                            fprintf(output, "%c", hex_value[i]);
                             printf("%c", hex_value[i]);
                         }
                     }
                     break;
             }
+            fprintf(output, "\n");
             printf("\n");
         }
     }
