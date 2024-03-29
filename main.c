@@ -176,9 +176,9 @@ int main(int argc, char *argv[]) {
                 break;
             }
             else if (number_str[i] == '.') {
-                int temp_arr2[50];
+                int temp_arr2[16];
                 int sign = 0;
-                for (int h = 0; h < 50; h++) {
+                for (int h = 0; h < 15; h++) {
                     temp_arr2[h] = -1;
                 }
 
@@ -212,15 +212,17 @@ int main(int argc, char *argv[]) {
                         }
 
 
-                        int temp_arr3[50];
+                        int temp_arr3[16];
                         int k = 0;
 
                         if (num_before_point == 0) {
                             temp_arr3[0] = 0;
-                            //k=1; bir sıkıntı çıkarsa icabına bakarız
                         }
                         else {
                             while (num_before_point != 0) {
+                                if (k == 16) {
+                                    break;
+                                }
                                 temp_arr3[k] = num_before_point % 2;
                                 num_before_point /= 2;
                                 k++;
@@ -232,7 +234,7 @@ int main(int argc, char *argv[]) {
                             temp_arr2[k - 1 - l] = temp_arr3[l];
                         }
 
-                        for(int n=k;n<50;n++){
+                        for(int n=k;n<16;n++){
                             num_after_point*=2;
                             if(num_after_point>=1){
                                 temp_arr2[n]=1;
@@ -243,9 +245,93 @@ int main(int argc, char *argv[]) {
                             }
                         }
 
-
-
                         int exponent = k - 1;
+                        int round_arr[17];
+
+                        for (int i = 0; i < 15; i++) {
+                            round_arr[i + 1] = temp_arr2[i];
+                        }
+
+                        if((round_arr[14+1]==0)&&(round_arr[14+2]==0)) {
+                            for(int q = 1; q <= 14; q++) {
+                                temp_arr2[q - 1] = round_arr[q];
+                            }
+                            temp_arr2[14] = 0;
+                            temp_arr2[15] = 0;
+                        }
+                        else if((round_arr[14+1]==1)&&(round_arr[14+2]==1)){
+                            for (int q = 14; q >= 0; q--) {
+                                if (round_arr[q] == 1) {
+                                    round_arr[q] = 0;
+                                }
+                                else if (round_arr[q] == 0) {
+                                    round_arr[q] = 1;
+                                    break;
+                                }
+                            }
+
+                            if (round_arr[0] == 1) {
+                                for(int q = 0; q <= 14 - 1; q++) {
+                                    temp_arr2[q] = round_arr[q];
+                                }
+                                temp_arr2[13] = 0;
+                                temp_arr2[14] = 0;
+                                temp_arr2[15] = 0;
+                                exponent++;
+                            }
+                            else if (round_arr[0] == 0) {
+                                for(int q = 1; q <= 14; q++) {
+                                    temp_arr2[q - 1] = round_arr[q];
+                                }
+                                temp_arr2[14] = 0;
+                                temp_arr2[15] = 0;
+                            }
+
+                        }
+                        else if((round_arr[14+1]==0)&&(round_arr[14+2]==1)){
+                            for(int q = 1; q <= 14; q++) {
+                                temp_arr2[q - 1] = round_arr[q];
+                            }
+                            temp_arr2[14] = 0;
+                            temp_arr2[15] = 0;
+                        }
+                        else if((round_arr[14+1]==1)&&(round_arr[14+2]==0)) {
+                            if (round_arr[14] == 0) {
+                                for (int q = 1; q <= 14; q++) {
+                                    temp_arr2[q - 1] = round_arr[q];
+                                }
+                                temp_arr2[14] = 0;
+                                temp_arr2[15] = 0;
+                            } else if (round_arr[14] == 1) {
+                                for (int q = 14; q >= 0; q--) {
+                                    if (round_arr[q] == 1) {
+                                        round_arr[q] = 0;
+                                    } else if (round_arr[q] == 0) {
+                                        round_arr[q] = 1;
+                                        break;
+                                    }
+                                }
+
+                                if (round_arr[0] == 1) {
+                                    for (int q = 0; q <= 14 - 1; q++) {
+                                        temp_arr2[q] = round_arr[q];
+                                    }
+                                    temp_arr2[13] = 0;
+                                    temp_arr2[14] = 0;
+                                    temp_arr2[15] = 0;
+                                    exponent++;
+                                } else if (round_arr[0] == 0) {
+                                    for (int q = 1; q <= 14; q++) {
+                                        temp_arr2[q - 1] = round_arr[q];
+                                    }
+                                    temp_arr2[14] = 0;
+                                    temp_arr2[15] = 0;
+                                }
+                            }
+                        }
+
+
+
                         int fraction_size = 0;
                         int exponent_size = 0;
 
@@ -268,6 +354,12 @@ int main(int argc, char *argv[]) {
                                 fraction_size = 19;
                                 exponent_size = 12;
                                 break;
+                        }
+
+                        int special_size = fraction_size + exponent_size;
+
+                        if (fraction_size == 19) {
+                            fraction_size = 13;
                         }
 
                         int final_float[fraction_size + exponent_size + 1];
@@ -361,14 +453,14 @@ int main(int argc, char *argv[]) {
                                 exp_value /= 2;
                             }
 
-                            for (int i = exponent_size + 1; i <= exponent_size + fraction_size + 1; i++) {
+                            for (int i = exponent_size + 1; i <= special_size + 1; i++) {
                                 final_float[i] = fraction_bits[i - exponent_size - 1];
                             }
 
-                            char final_char_arr[exponent_size + fraction_size + 2];
+                            char final_char_arr[special_size + 2];
 
-                            for (int i = 0; i <= exponent_size + fraction_size + 1; i++) {
-                                if (i == exponent_size + fraction_size + 1) {
+                            for (int i = 0; i <= special_size + 1; i++) {
+                                if (i == special_size + 1) {
                                     final_char_arr[i] = '\0';
                                 }
                                 else {
@@ -376,8 +468,8 @@ int main(int argc, char *argv[]) {
                                 }
                             }
 
-                            char* final_array = (char*) malloc((exponent_size + fraction_size + 2) * sizeof(char));
-                            snprintf(final_array,(exponent_size + fraction_size + 2), final_char_arr);
+                            char* final_array = (char*) malloc((special_size + 2) * sizeof(char));
+                            snprintf(final_array,(special_size + 2), final_char_arr);
 
 
 
@@ -387,7 +479,7 @@ int main(int argc, char *argv[]) {
 
                             switch ((int)(arg2)) {
                                 case 108:
-                                    for(int i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
+                                    for(int i=(special_size + 1)/4-1;i>=0;i--){
                                         if(i%2==0){
                                             printf("%c",print_array[i]);
                                             printf("%c ",print_array[i + 1]);
@@ -395,7 +487,7 @@ int main(int argc, char *argv[]) {
                                     }
                                     break;
                                 case 98:
-                                    for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
+                                    for (int i = 0; i < (special_size + 1) / 4; i++) {
                                         if (i % 2 == 1) {
                                             printf("%c ", print_array[i]);
                                         }
@@ -492,14 +584,14 @@ int main(int argc, char *argv[]) {
                                 exp_value /= 2;
                             }
 
-                            for (int i = exponent_size + 1; i <= exponent_size + fraction_size + 1; i++) {
+                            for (int i = exponent_size + 1; i <= special_size + 1; i++) {
                                 final_float[i] = fraction_bits[i - exponent_size - 1];
                             }
 
-                            char final_char_arr[exponent_size + fraction_size + 2];
+                            char final_char_arr[special_size + 2];
 
-                            for (int i = 0; i <= exponent_size + fraction_size + 1; i++) {
-                                if (i == exponent_size + fraction_size + 1) {
+                            for (int i = 0; i <= special_size + 1; i++) {
+                                if (i == special_size + 1) {
                                     final_char_arr[i] = '\0';
                                 }
                                 else {
@@ -507,8 +599,8 @@ int main(int argc, char *argv[]) {
                                 }
                             }
 
-                            char* final_array = (char*) malloc((exponent_size + fraction_size + 2) * sizeof(char));
-                            snprintf(final_array,(exponent_size + fraction_size + 2), final_char_arr);
+                            char* final_array = (char*) malloc((special_size + 2) * sizeof(char));
+                            snprintf(final_array,(special_size + 2), final_char_arr);
 
 
 
@@ -520,7 +612,7 @@ int main(int argc, char *argv[]) {
 
                             switch ((int)(arg2)) {
                                 case 108:
-                                    for(int i=(exponent_size + fraction_size + 1)/4-1;i>=0;i--){
+                                    for(int i=(special_size + 1)/4-1;i>=0;i--){
                                         if(i%2==0){
                                             printf("%c",print_array[i]);
                                             printf("%c ",print_array[i + 1]);
@@ -528,7 +620,7 @@ int main(int argc, char *argv[]) {
                                     }
                                     break;
                                 case 98:
-                                    for (int i = 0; i < (exponent_size + fraction_size + 1) / 4; i++) {
+                                    for (int i = 0; i < (special_size + 1) / 4; i++) {
                                         if (i % 2 == 1) {
                                             printf("%c ", print_array[i]);
                                         }
@@ -541,9 +633,6 @@ int main(int argc, char *argv[]) {
 
 
                         }
-
-
-
 
                         break;
 
@@ -601,6 +690,10 @@ int main(int argc, char *argv[]) {
             for(int j = eol; j >= 0; j--){
                 decimal_number = decimal_number + (number_str[j]-'0') * power;
                 power = power * 10;
+            }
+
+            if (number_str[0] == '-') {
+                decimal_number *= -1;
             }
 
             char *hex_value = binaryToHexadecimal(signedIntToBinary(decimal_number));
